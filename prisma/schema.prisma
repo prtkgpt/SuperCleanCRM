@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String // Hashed
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients  Client[]
+  jobs     Job[]
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  email     String?
+  phone     String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addresses Address[]
+  jobs      Job[]
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  street    String
+  city      String?
+  state     String?
+  zip       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  jobs Job[]
+}
+
+model Job {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientId    String
+  client      Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  addressId   String?
+  address     Address?      @relation(fields: [addressId], references: [id])
+
+  serviceType String?       // e.g. "Standard Clean", "Deep Clean"
+  price       Float         @default(0)
+
+  startAt     DateTime
+  endAt       DateTime?
+  duration    Int?          // in minutes
+
+  status      String        @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  paymentStatus String      @default("UNPAID")    // UNPAID, PAID
+
+  notes       String?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  recurrenceId String?
+  recurrence   RecurrenceRule? @relation(fields: [recurrenceId], references: [id])
+
+  paymentRecords PaymentRecord[]
+}
+
+model RecurrenceRule {
+  id        String    @id @default(cuid())
+  userId    String
+  frequency String    // WEEKLY, BIWEEKLY, MONTHLY
+  interval  Int       @default(1)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  jobs      Job[]
+}
+
+model MessageLog {
+  id        String   @id @default(cuid())
+  userId    String
+  clientId  String
+  channel   String   // "SMS", "EMAIL"
+  template  String   // "CONFIRMATION", "REMINDER"
+  sentAt    DateTime @default(now())
+  status    String   // "SENT", "FAILED"
+}
+
+model PaymentRecord {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  amount    Float
+  method    String   // "STRIPE", "CASH", "CHECK"
+  status    String   // "PAID", "PENDING"
+  externalId String? // Stripe Charge ID
+  createdAt DateTime @default(now())
+}
