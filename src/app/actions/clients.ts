@@ -19,7 +19,7 @@ const ClientSchema = z.object({
   zip: z.string().optional(),
 });
 
-export async function createClient(prevState: any, formData: FormData) {
+export async function createClient(prevState: unknown, formData: FormData) {
   const session = await auth();
   if (!session?.user?.email) {
     throw new Error("Unauthorized");

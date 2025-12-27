@@ -2,16 +2,21 @@
 
 import { createJob } from "@/app/actions/jobs";
 import { useActionState } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Client } from "@prisma/client";
 
-export default function NewJobForm({ clients, prefilledDate }: { clients: any[], prefilledDate?: string }) {
+// Define a type for clients
+type SimpleClient = {
+    id: string;
+    name: string;
+};
+
+export default function NewJobForm({ clients, prefilledDate }: { clients: SimpleClient[], prefilledDate?: string }) {
     const initialState = { message: "", errors: {} as Record<string, string[]> };
     const [state, action, isPending] = useActionState(createJob, initialState);
 
     // Default start time: prefilledDate or now, rounded to next hour
-    const [startAt, setStartAt] = useState("");
-
-    useEffect(() => {
+    const [startAt, setStartAt] = useState(() => {
         const date = prefilledDate ? new Date(prefilledDate) : new Date();
         if (!prefilledDate) {
             date.setMinutes(0, 0, 0);
@@ -20,9 +25,8 @@ export default function NewJobForm({ clients, prefilledDate }: { clients: any[],
         // Format to YYYY-MM-DDTHH:MM for datetime-local
         // Adjust for local timezone offset
         const tzOffset = date.getTimezoneOffset() * 60000;
-        const localISOTime = (new Date(date.getTime() - tzOffset)).toISOString().slice(0, 16);
-        setStartAt(localISOTime);
-    }, [prefilledDate]);
+        return (new Date(date.getTime() - tzOffset)).toISOString().slice(0, 16);
+    });
 
     return (
         <form action={action} className="space-y-4">

@@ -19,7 +19,7 @@ const JobSchema = z.object({
   frequency: z.string().optional(), // "ONCE", "WEEKLY", "BIWEEKLY", "MONTHLY"
 });
 
-export async function createJob(prevState: any, formData: FormData) {
+export async function createJob(prevState: unknown, formData: FormData) {
   const session = await auth();
   if (!session?.user?.email) {
     throw new Error("Unauthorized");
@@ -195,6 +195,7 @@ export async function getJobs(date?: Date) {
     const user = await prisma.user.findUnique({ where: { email: session.user.email }});
     if (!user) return [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { userId: user.id };
 
     if (date) {
