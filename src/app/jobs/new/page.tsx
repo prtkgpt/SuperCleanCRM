@@ -7,7 +7,7 @@ export default async function NewJobPage({ searchParams }: { searchParams: { dat
     const { date } = await searchParams;
 
     return (
-        <div className="p-4">
+        <div className="p-4 max-w-lg mx-auto">
             <h1 className="text-2xl font-bold mb-6">New Job</h1>
             {clients.length === 0 ? (
                 <div className="text-center py-10">

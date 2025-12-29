@@ -48,4 +48,4 @@ After a successful deployment, the database is empty. You need to create the tab
 - Calendar & Scheduling
 - Client Management
 - Job Tracking
-- Mobile-first UI
+- Responsive UI (Mobile & Laptop)

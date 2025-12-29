@@ -12,7 +12,7 @@ export default function NewClientPage() {
     const [state, action, isPending] = useActionState(createClient, initialState);
 
     return (
-    <div className="p-4">
+    <div className="p-4 max-w-lg mx-auto">
       <h1 className="text-2xl font-bold mb-6">Add Client</h1>
       <form action={action} className="space-y-4">
         {state.message && (

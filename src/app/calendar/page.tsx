@@ -34,7 +34,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: { d
                 </div>
 
                 {/* Week Strip */}
-                <div className="flex justify-between mb-2">
+                <div className="flex justify-between md:justify-start md:gap-8 mb-2">
                     {weekDays.map((day) => {
                         const isSelected = isSameDay(day, currentDate);
                         return (
