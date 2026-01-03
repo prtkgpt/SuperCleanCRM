@@ -5,12 +5,22 @@
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/update-schema.js && prisma generate && next build",
-    "vercel-build": "node scripts/update-schema.js && prisma generate && prisma migrate deploy && next build",
+    "vercel-build": "node scripts/update-schema.js && prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "eslint"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "esbuild",
+      "bcryptjs",
+      "sharp"
+    ]
   },
   "dependencies": {
     "@prisma/client": "5.22.0",
